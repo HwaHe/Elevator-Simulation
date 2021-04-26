@@ -1,0 +1,5 @@
+".\Objects\delay.obj",
+".\Objects\main.obj",
+".\Objects\LCD1602.obj" 
+TO ".\Objects\ElevatorSche" 
+PRINT(".\Listings\ElevatorSche.m51") RAMSIZE(256) 
