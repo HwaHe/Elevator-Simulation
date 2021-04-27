@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   MAIN                                                                  04/27/2021 00:43:53 PAGE 1   
+C51 COMPILER V9.54   MAIN                                                                  04/27/2021 11:34:22 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
@@ -13,16 +13,16 @@ line level    source
    3          #include "LCD1602.h"
    4          #include "status.h"
    5          
-   6          
-   7          void main()
-   8          {
-   9   1              LCD_Init();
-  10   1          showStatus(LEFT, UP, 3);
-  11   1          delay(3000);
-  12   1          showStatus(RIGHT, DOWN, 4);
-  13   1          delay(3000);
-  14   1          showStatus(RIGHT, STILL, 4);
-  15   1          while(1);
+   6          void main()
+   7          {
+   8   1          LCD_Init();
+   9   1          showStatus(LEFT, UP, 3);
+  10   1          delay(3000);
+  11   1          showStatus(RIGHT, DOWN, 4);
+  12   1          delay(3000);
+  13   1          showStatus(RIGHT, STILL, 4);
+  14   1          while (1);
+  15   1          
   16   1      }
 
 

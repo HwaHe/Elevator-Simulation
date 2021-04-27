@@ -1,7 +1,7 @@
 
 void delay(unsigned int xms)
 {
-    while(xms--)
+    while (xms--)
     {
         unsigned char i, j;
 
@@ -9,12 +9,14 @@ void delay(unsigned int xms)
         j = 239;
         do
         {
-            while (--j);
+            while (--j)
+                ;
         } while (--i);
     }
 }
 
 void delayus(unsigned int xus)
 {
-    while(xus--);
+    while (xus--)
+        ;
 }
