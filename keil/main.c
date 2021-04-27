@@ -14,6 +14,8 @@ typedef struct Elevator
 
 Elev leftElev, rightElev;
 
+void showElevStatus(Elev elev);
+
 void init()
 {
     LCD_Init();
@@ -21,12 +23,12 @@ void init()
     leftElev.index=LEFT;
     leftElev.floor=1;
     leftElev.status=STILL;
-    showStatus(leftElev);
+    showElevStatus(leftElev);
 
     rightElev.index=RIGHT;
     rightElev.floor=1;
     rightElev.status=STILL;
-    showStatus(rightElev);
+    showElevStatus(rightElev);
     
 }
 
@@ -35,11 +37,11 @@ void showIndicators()
     unsigned int i;
     for(i=0;i<8;i++)
     {
-        
+
     }
 }
 
-void showStatus(Elev elev)
+void showElevStatus(Elev elev)
 {
     switch (elev.index)
     {
@@ -54,10 +56,21 @@ void showStatus(Elev elev)
 
 void main()
 {
-    init();
+    // init();
+    // while (1)
+    // {
+    //     showIndicators();
+    // }
+    LCD_Init();
+    delay(3000);
+    showStatus(LEFT, UP, 4);
+    delay(3000);
+    showStatus(RIGHT, DOWN, 8);
+    delay(3000);
+    showStatus(LEFT, STILL, 1);
     while (1)
     {
-        showIndicators();
+        ;
     }
     
 }
