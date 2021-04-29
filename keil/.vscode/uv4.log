@@ -1,15 +1,6 @@
 Build target 'Target 1'
-compiling LCD1602.c...
+compiling main.c...
 linking...
-*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
-    SEGMENT: ?PR?_DELAYUS?DELAY
-
-*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
-    SEGMENT: ?PR?INIT?MAIN
-
-*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
-    SEGMENT: ?PR?SHOWINDICATORS?MAIN
-
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?_LCD_SHOWCHAR?LCD1602
 
@@ -28,6 +19,6 @@ linking...
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?INITSTATUS?LCD1602
 
-Program Size: data=68.0 xdata=0 code=1395
+Program Size: data=64.0 xdata=0 code=1468
 creating hex file from ".\Objects\ElevatorSche"...
-".\Objects\ElevatorSche" - 0 Error(s), 9 Warning(s).
+".\Objects\ElevatorSche" - 0 Error(s), 6 Warning(s).
