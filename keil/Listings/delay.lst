@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   DELAY                                                                 04/27/2021 11:34:22 PAGE 1   
+C51 COMPILER V9.54   DELAY                                                                 04/29/2021 23:49:36 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE DELAY
@@ -8,28 +8,27 @@ COMPILER INVOKED BY: E:\embeded\Keil_v5\C51\BIN\C51.EXE delay.c OPTIMIZE(8,SPEED
 
 line level    source
 
-   1          
-   2          void delay(unsigned int xms)
-   3          {
-   4   1          while (xms--)
-   5   1          {
+   1          /**
+   2          * @brief 晶振为12MHz时，延时时长为x ms
+   3            */
+   4          void delay(unsigned int xms) {
+   5   1          while (xms--) {
    6   2              unsigned char i, j;
    7   2      
    8   2              i = 2;
    9   2              j = 239;
-  10   2              do
-  11   2              {
-  12   3                  while (--j)
-  13   3                      ;
-  14   3              } while (--i);
-  15   2          }
-  16   1      }
-  17          
-  18          void delayus(unsigned int xus)
-  19          {
-  20   1          while (xus--)
-  21   1              ;
-  22   1      }
+  10   2              do {
+  11   3                  while (--j);
+  12   3              } while (--i);
+  13   2          }
+  14   1      }
+  15          
+  16          /**
+  17          * @brief 如你所见，是一个不准确的微妙延时函数
+  18            */
+  19          void delayus(unsigned int xus) {
+  20   1          while (xus--);
+  21   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE

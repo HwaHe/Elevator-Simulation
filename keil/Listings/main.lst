@@ -1,4 +1,4 @@
-C51 COMPILER V9.54   MAIN                                                                  04/29/2021 09:36:22 PAGE 1   
+C51 COMPILER V9.54   MAIN                                                                  04/29/2021 23:46:29 PAGE 1   
 
 
 C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
@@ -13,155 +13,569 @@ line level    source
    3          #include "LCD1602.h"
    4          #include "status.h"
    5          
-   6          int el = 0, er = 0, up = 0, down = 0;
-   7          
-   8          typedef struct Elevator
-   9          {
-  10              unsigned int index;
-  11              unsigned int floor;
-  12              unsigned int status;
-  13          } Elev;
+   6          #define uchar unsigned char
+   7          #define uint unsigned int
+   8          
+   9          void init();
+  10          
+  11          void showElevStatus();
+  12          
+  13          void onButtonClick();
   14          
-  15          Elev leftElev, rightElev;
+  15          void two2FourDecode(uchar flagEl, uchar flagEr, uchar flagUp, uchar flagDown);
   16          
-  17          void init();
-  18          void showElevStatus();
-  19          void onButtonClick();
-  20          void two2FourDecode(unsigned char flagEl, unsigned char flagEr, unsigned char flagUp, unsigned char flagDo
-             -wn);
-  21          void showIndicators();
+  17          int hasUpRequest(int request, int floor);
+  18          
+  19          int hasDownRequest(int request, int floor);
+  20          
+  21          int clearBit(int num, int pos);
   22          
-  23          void main()
-  24          {
-  25   1          unsigned int k = 0;
-  26   1          init();
-  27   1          while (1)
-  28   1          {
-  29   2      
-  30   2              onButtonClick();
-  31   2              showIndicators();
-  32   2      
-  33   2              el = 0;
-  34   2              er = 0;
-  35   2              up = 0;
-  36   2              down = 0;
-  37   2      
-  38   2              for (k = 0; k < 128; k++)
-  39   2              {
-  40   3                  onButtonClick();
-  41   3                  showIndicators();
-  42   3              }
-  43   2          }
-  44   1      }
-  45          
-  46          void init()
-  47          {
-  48   1          // 初始化LCD显示屏
-  49   1          LCD_Init();
-  50   1      
-  51   1          // 初始化左边电梯
-  52   1          leftElev.index = LEFT;
-  53   1          leftElev.floor = 1;
-C51 COMPILER V9.54   MAIN                                                                  04/29/2021 09:36:22 PAGE 2   
+  23          int setBit(int num, int pos);
+  24          
+  25          void showIndicators();
+  26          
+  27          void elevatorSche();
+  28          
+  29          typedef struct Elevator {
+  30              uint index;
+  31              uint floor;
+  32              uint status;
+  33          } Elev;
+  34          
+  35          Elev leftElev, rightElev;
+  36          int el = 0, er = 0, up = 0, down = 0;
+  37          
+  38          void main() {
+  39   1          uint k;
+  40   1          init();
+  41   1          while (1) {
+  42   2              onButtonClick();
+  43   2      
+  44   2              elevatorSche();
+  45   2      
+  46   2              for (k = 0; k < 128; k++) {
+  47   3                  onButtonClick();
+  48   3              }
+  49   2          }
+  50   1      }
+  51          
+  52          void init() {
+  53   1          // 初始化LCD显示屏
+  54   1          LCD_Init();
+C51 COMPILER V9.54   MAIN                                                                  04/29/2021 23:46:29 PAGE 2   
 
-  54   1          leftElev.status = STILL;
-  55   1          // 初始化右边电梯
-  56   1          rightElev.index = RIGHT;
-  57   1          rightElev.floor = 1;
-  58   1          rightElev.status = STILL;
-  59   1          showElevStatus();
-  60   1      }
-  61          
-  62          void showElevStatus()
-  63          {
-  64   1          showStatus(LEFT, leftElev.status, leftElev.floor);
-  65   1          showStatus(RIGHT, rightElev.status, rightElev.floor);
-  66   1      }
-  67          
-  68          void onButtonClick()
-  69          {
-  70   1          if (P1_7)
-  71   1          {
-  72   2              el |= (1 << ((P1_6 * 4) | (P1_5 * 2) | P1_4));
-  73   2          }
-  74   1      
-  75   1          if (P3_7)
-  76   1          {
-  77   2              er |= (1 << ((P3_6 * 4) | (P3_5 * 2) | P3_4));
-  78   2          }
-  79   1      
-  80   1          if (P1_3)
-  81   1          {
-  82   2              up |= (1 << ((P1_2 * 4) | (P1_1 * 2) | P1_0));
-  83   2          }
-  84   1      
-  85   1          if (P3_3)
-  86   1          {
-  87   2              down |= (1 << ((P3_2 * 4) | (P3_1 * 2) | P3_0));
-  88   2          }
-  89   1      }
-  90          
-  91          void two2FourDecode(unsigned char flagEl, unsigned char flagEr, unsigned char flagUp, unsigned char flagDo
-             -wn)
-  92          {
-  93   1          if (flagEl)
-  94   1          {
-  95   2              P2_3 = 0;
-  96   2              P2_4 = 0;
-  97   2              P2_5 = 0;
-  98   2              delay(1);
-  99   2          }
- 100   1          if (flagEr)
- 101   1          {
- 102   2              P2_3 = 1;
- 103   2              P2_4 = 0;
- 104   2              P2_5 = 0;
- 105   2              delay(1);
- 106   2          }
- 107   1          if (flagUp)
- 108   1          {
- 109   2              P2_3 = 0;
- 110   2              P2_4 = 1;
- 111   2              P2_5 = 0;
- 112   2              delay(1);
- 113   2          }
- 114   1          if (flagDown)
-C51 COMPILER V9.54   MAIN                                                                  04/29/2021 09:36:22 PAGE 3   
+  55   1      
+  56   1          // 初始化左边电梯
+  57   1          leftElev.index = LEFT;
+  58   1          leftElev.floor = 1;
+  59   1          leftElev.status = STILL;
+  60   1          // 初始化右边电梯
+  61   1          rightElev.index = RIGHT;
+  62   1          rightElev.floor = 1;
+  63   1          rightElev.status = STILL;
+  64   1          showElevStatus();
+  65   1      }
+  66          
+  67          void showElevStatus() {
+  68   1          // 显示左电梯状态和楼层
+  69   1          LCD_SetCursor(1, 3);
+  70   1          LCD_WriteData(leftElev.status);     // 显示自定义字符位置
+  71   1          LCD_ShowNum(1, 4, leftElev.floor, 2);
+  72   1      
+  73   1          LCD_SetCursor(1, 12);
+  74   1          LCD_WriteData(rightElev.status);
+  75   1          LCD_ShowNum(1, 13, rightElev.floor, 2);
+  76   1      }
+  77          
+  78          void onButtonClick() {
+  79   1          // 如果P1_7高电平，通过8-3编码器得到按键数值
+  80   1          if (P1_7) {
+  81   2              el |= (1 << ((P1_6 * 4) | (P1_5 * 2) | P1_4));
+  82   2          }
+  83   1      
+  84   1          if (P3_7) {
+  85   2              er |= (1 << ((P3_6 * 4) | (P3_5 * 2) | P3_4));
+  86   2          }
+  87   1      
+  88   1          if (P1_3) {
+  89   2              up |= (1 << ((P1_2 * 4) | (P1_1 * 2) | P1_0));
+  90   2          }
+  91   1      
+  92   1          if (P3_3) {
+  93   2              down |= (1 << ((P3_2 * 4) | (P3_1 * 2) | P3_0));
+  94   2          }
+  95   1      
+  96   1          // 点亮对应的指示灯
+  97   1          showIndicators();
+  98   1      }
+  99          
+ 100          void showIndicators() {
+ 101   1          uchar i;
+ 102   1          for (i = 0; i < 8; i++) {
+ 103   2              // 给P2低三位赋按键位置值
+ 104   2              P2_0 = i & 0x01;
+ 105   2              P2_1 = i & 0x02;
+ 106   2              P2_2 = i & 0x04;
+ 107   2      
+ 108   2              // 通过2-4译码器使能对应的3-8译码器，点亮对应的指示灯
+ 109   2              two2FourDecode(
+ 110   2                      (el >> i) & 0x01,
+ 111   2                      (er >> i) & 0x01,
+ 112   2                      (up >> i) & 0x01,
+ 113   2                      (down >> i) & 0x01
+ 114   2              );
+ 115   2          }
+ 116   1      }
+C51 COMPILER V9.54   MAIN                                                                  04/29/2021 23:46:29 PAGE 3   
 
- 115   1          {
- 116   2              P2_3 = 1;
- 117   2              P2_4 = 1;
- 118   2              P2_5 = 0;
- 119   2              delay(1);
- 120   2          }
- 121   1          P2_5 = 1;
- 122   1      }
- 123          
- 124          void showIndicators()
- 125          {
- 126   1          unsigned char i;
- 127   1          unsigned char flagEl, flagEr, flagUp, flagDown;
- 128   1          for (i = 0; i < 8; i++)
- 129   1          {
- 130   2              P2_0 = i & 0x01;
- 131   2              P2_1 = i & 0x02;
- 132   2              P2_2 = i & 0x04;
- 133   2              flagEl = (el >> i) & 1 == 1;
- 134   2              flagEr = (er >> i) & 1 == 1;
- 135   2              flagUp = (up >> i) & 1 == 1;
- 136   2              flagDown = (down >> i) & 1 == 1;
- 137   2              two2FourDecode(flagEl, flagEr, flagUp, flagDown);
- 138   2              delayus(50);
- 139   2          }
- 140   1      }
+ 117          
+ 118          void updateIndicators() {
+ 119   1          if (leftElev.status == UP) {
+ 120   2              up = clearBit(up, leftElev.floor);
+ 121   2              el = clearBit(el, leftElev.floor);
+ 122   2      
+ 123   2              // 是为了接到最高楼层的向下人员而处于上升的状态，而且当前楼层是向�
+             -�人员中的最高层
+ 124   2              if (hasUpRequest(el, leftElev.floor) <= 0 && hasUpRequest(up, leftElev.floor) <= 0 &&
+ 125   2                  hasUpRequest(down, leftElev.floor) <= 0) {
+ 126   3                  down = clearBit(down, leftElev.floor);
+ 127   3              }
+ 128   2          } else if (leftElev.status == DOWN) {
+ 129   2              down = clearBit(down, leftElev.floor);
+ 130   2              el = clearBit(el, leftElev.floor);
+ 131   2      
+ 132   2              //为了接到最低楼层的向上人员，而且当前楼层是向上人员中的最底层
+ 133   2              if (hasDownRequest(el, leftElev.floor) <= 0 && hasDownRequest(down, leftElev.floor) <= 0 &&
+ 134   2                  hasDownRequest(up, leftElev.floor) <= 0) {
+ 135   3                  up = clearBit(up, leftElev.floor);
+ 136   3              }
+ 137   2          }
+ 138   1      
+ 139   1          if (rightElev.status == UP) {
+ 140   2              up = clearBit(up, rightElev.floor);
+ 141   2              er = clearBit(er, rightElev.floor);
+ 142   2      
+ 143   2              // 为了接到最高楼层的向上人员而处于向上的状态，而且当前楼层是向下�
+             -�员中的最高层
+ 144   2              if (hasUpRequest(el, rightElev.floor) <= 0 && hasUpRequest(up, rightElev.floor) <= 0 &&
+ 145   2                  hasUpRequest(down, rightElev.floor) <= 0) {
+ 146   3                  down = clearBit(down, rightElev.floor);
+ 147   3              }
+ 148   2          } else if (rightElev.status == DOWN) {
+ 149   2              down = clearBit(down, rightElev.floor);
+ 150   2              er = clearBit(er, rightElev.floor);
+ 151   2      
+ 152   2              // 为了接到最低楼层的向上人员，而且当前楼层是向上人员中的最底层
+ 153   2              if (hasDownRequest(el, rightElev.floor) <= 0 && hasDownRequest(down, rightElev.floor) <= 0 &&
+ 154   2                  hasDownRequest(up, rightElev.floor) <= 0) {
+ 155   3                  up = clearBit(up, rightElev.floor);
+ 156   3              }
+ 157   2          }
+ 158   1      }
+ 159          
+ 160          void two2FourDecode(uchar flagEl, uchar flagEr, uchar flagUp, uchar flagDown) {
+ 161   1          if (flagEl) {
+ 162   2              P2_3 = 0;
+ 163   2              P2_4 = 0;
+ 164   2              P2_5 = 0;
+ 165   2              delay(1);
+ 166   2          }
+ 167   1          if (flagEr) {
+ 168   2              P2_3 = 1;
+ 169   2              P2_4 = 0;
+ 170   2              P2_5 = 0;
+ 171   2              delay(1);
+ 172   2          }
+ 173   1          if (flagUp) {
+ 174   2              P2_3 = 0;
+ 175   2              P2_4 = 1;
+ 176   2              P2_5 = 0;
+C51 COMPILER V9.54   MAIN                                                                  04/29/2021 23:46:29 PAGE 4   
+
+ 177   2              delay(1);
+ 178   2          }
+ 179   1          if (flagDown) {
+ 180   2              P2_3 = 1;
+ 181   2              P2_4 = 1;
+ 182   2              P2_5 = 0;
+ 183   2              delay(1);
+ 184   2          }
+ 185   1          P2_5 = 1;
+ 186   1      }
+ 187          
+ 188          int hasUpRequest(int request, int floor) {
+ 189   1          return request >> floor;
+ 190   1      }
+ 191          
+ 192          int hasDownRequest(int request, int floor) {
+ 193   1          return request & (~((request >> (floor - 1)) << (floor - 1)));
+ 194   1      }
+ 195          
+ 196          int most(int x) {
+ 197   1          // binary search
+ 198   1          int res;
+ 199   1          unsigned y;
+ 200   1          int n = 32;
+ 201   1          y = x >> 16;
+ 202   1          if (y != 0) {
+ 203   2              n = n - 16;
+ 204   2              x = y;
+ 205   2          }
+ 206   1          y = x >> 8;
+ 207   1          if (y != 0) {
+ 208   2              n = n - 8;
+ 209   2              x = y;
+ 210   2          }
+ 211   1          y = x >> 4;
+ 212   1          if (y != 0) {
+ 213   2              n = n - 4;
+ 214   2              x = y;
+ 215   2          }
+ 216   1          y = x >> 2;
+ 217   1          if (y != 0) {
+ 218   2              n = n - 2;
+ 219   2              x = y;
+ 220   2          }
+ 221   1          y = x >> 1;
+ 222   1          if (y != 0) res = n - 2;
+ 223   1          res = n - x;
+ 224   1          return 32 - res;
+ 225   1      }
+ 226          
+ 227          int least(int x) {
+ 228   1          // binary search
+ 229   1          int n;
+ 230   1          if (x == 0) return 0;
+ 231   1          n = 1;
+ 232   1          if ((x & 0x0000FFFF) == 0) {
+ 233   2              n = n + 16;
+ 234   2              x = x >> 16;
+ 235   2          }
+ 236   1          if ((x & 0x000000FF) == 0) {
+ 237   2              n = n + 8;
+ 238   2              x = x >> 8;
+C51 COMPILER V9.54   MAIN                                                                  04/29/2021 23:46:29 PAGE 5   
+
+ 239   2          }
+ 240   1          if ((x & 0x0000000F) == 0) {
+ 241   2              n = n + 4;
+ 242   2              x = x >> 4;
+ 243   2          }
+ 244   1          if ((x & 0x00000003) == 0) {
+ 245   2              n = n + 2;
+ 246   2              x = x >> 2;
+ 247   2          }
+ 248   1          return n - (x & 1) + 1;
+ 249   1      }
+ 250          
+ 251          int setBit(int num, int pos) {
+ 252   1          num |= (1 << (pos - 1));
+ 253   1          return num;
+ 254   1      }
+ 255          
+ 256          int clearBit(int num, int pos) {
+ 257   1          num &= ~(1 << (pos - 1));
+ 258   1          return num;
+ 259   1      }
+ 260          
+ 261          void elevatorSche() {
+ 262   1          if (leftElev.status == STILL) {
+ 263   2              if (rightElev.status == STILL) {
+ 264   3                  // 静止，静止
+ 265   3                  // 优先响应来自内部的请求
+ 266   3                  if (clearBit(el, leftElev.floor) != 0) {       // 如果左边有内部请求
+ 267   4                      if (hasUpRequest(el, leftElev.floor)) {
+ 268   5                          leftElev.status = UP;
+ 269   5                          leftElev.floor++;
+ 270   5                      } else if (hasDownRequest(el, leftElev.floor)) {
+ 271   5                          leftElev.status = DOWN;
+ 272   5                          leftElev.floor--;
+ 273   5                      }
+ 274   4                  }
+ 275   3                  if (clearBit(er, rightElev.floor != 0))       // 如果右边有内部请求
+ 276   3                  {
+ 277   4                      if (hasUpRequest(er, rightElev.floor)) {
+ 278   5                          rightElev.status = UP;
+ 279   5                          rightElev.floor++;
+ 280   5                      } else if (hasDownRequest(er, rightElev.floor)) {
+ 281   5                          rightElev.status = DOWN;
+ 282   5                          rightElev.floor--;
+ 283   5                      }
+ 284   4                  }
+ 285   3                  if (leftElev.status == STILL || rightElev.floor == STILL) {         // 如果两个没有都�
+             -�dispatch，尝试响应up和down
+ 286   4                      if (leftElev.status == STILL) {         // 如果是左边没有被dispatch
+ 287   5                          if (clearBit(up, leftElev.floor) != 0) {    // 尝试响应up
+ 288   6                              if (hasUpRequest(up, leftElev.floor)) {
+ 289   7                                  leftElev.status = UP;
+ 290   7                                  leftElev.floor++;
+ 291   7                              } else if (hasDownRequest(up, leftElev.floor)) {
+ 292   7                                  leftElev.status = DOWN;
+ 293   7                                  leftElev.floor--;
+ 294   7                              }
+ 295   6                          } else if (clearBit(down, leftElev.floor) != 0) {  // 尝试响应down
+ 296   6                              if (hasUpRequest(down, leftElev.floor)) {
+ 297   7                                  leftElev.status = UP;
+ 298   7                                  leftElev.floor++;
+ 299   7                              } else if (hasDownRequest(down, leftElev.floor)) {
+C51 COMPILER V9.54   MAIN                                                                  04/29/2021 23:46:29 PAGE 6   
+
+ 300   7                                  leftElev.status = DOWN;
+ 301   7                                  leftElev.floor--;
+ 302   7                              }
+ 303   6                          }
+ 304   5                      } else {                              // 如果是右边没有被dispatch
+ 305   5                          if (clearBit(up, rightElev.floor) != 0) {   // 尝试响应up
+ 306   6                              if (hasUpRequest(up, rightElev.floor)) {
+ 307   7                                  rightElev.status = UP;
+ 308   7                                  rightElev.floor++;
+ 309   7                              } else if (hasDownRequest(up, rightElev.floor)) {
+ 310   7                                  rightElev.status = DOWN;
+ 311   7                                  rightElev.floor--;
+ 312   7                              }
+ 313   6                          } else if (clearBit(down, rightElev.floor) != 0) {   // 尝试响应down
+ 314   6                              if (hasUpRequest(down, rightElev.floor)) {
+ 315   7                                  rightElev.status = UP;
+ 316   7                                  rightElev.floor++;
+ 317   7                              } else if (hasDownRequest(down, rightElev.floor)) {
+ 318   7                                  rightElev.status = DOWN;
+ 319   7                                  rightElev.floor--;
+ 320   7                              }
+ 321   6                          }
+ 322   5                      }
+ 323   4                  }
+ 324   3              } else if (rightElev.status == UP) {
+ 325   3                  // 静止，向上
+ 326   3                  if (clearBit(el, leftElev.floor) != 0) {       // 如果左边的有内部请求，响应
+ 327   4                      if (hasUpRequest(el, leftElev.floor)) {
+ 328   5                          leftElev.status = UP;
+ 329   5                          leftElev.floor++;
+ 330   5                      } else if (hasDownRequest(el, leftElev.floor)) {
+ 331   5                          leftElev.status = DOWN;
+ 332   5                          leftElev.floor--;
+ 333   5                      }
+ 334   4                  } else if (clearBit(up, leftElev.floor) != 0 || clearBit(down, leftElev.floor) != 0) {   // �
+             -�果没有，尝试响应外部请求
+ 335   4                      if (hasUpRequest(up, leftElev.floor) || hasUpRequest(down, leftElev.floor)) {   // 外部�
+             -��求有向上的
+ 336   5                          leftElev.status = UP;
+ 337   5                          leftElev.floor++;
+ 338   5                      } else {      // 外部请求有向下的
+ 339   5                          leftElev.status = DOWN;
+ 340   5                          leftElev.floor++;
+ 341   5                      }
+ 342   4                  }
+ 343   3      
+ 344   3                  if (hasUpRequest(up, rightElev.floor) || hasUpRequest(er, rightElev.floor)) {   // 如果还�
+             -�在上部的请求，继续上升
+ 345   4                      rightElev.floor++;
+ 346   4                  } else if (hasDownRequest(down, rightElev.floor) ||
+ 347   3                             hasDownRequest(er, rightElev.floor)) {   // 否则，检查是否存在下方请求
+ 348   4                      rightElev.status = DOWN;
+ 349   4                      rightElev.floor--;
+ 350   4                  } else {  // 都没有，直接静置右边电梯
+ 351   4                      rightElev.status = STILL;
+ 352   4                  }
+ 353   3              } else {
+ 354   3                  // 静止，向下
+ 355   3                  if (clearBit(el, leftElev.floor) != 0) {       // 如果左边的有内部请求，响应
+ 356   4                      if (hasUpRequest(el, leftElev.floor)) {
+ 357   5                          leftElev.status = UP;
+ 358   5                          leftElev.floor++;
+C51 COMPILER V9.54   MAIN                                                                  04/29/2021 23:46:29 PAGE 7   
+
+ 359   5                      } else if (hasDownRequest(el, leftElev.floor)) {
+ 360   5                          leftElev.status = DOWN;
+ 361   5                          leftElev.floor--;
+ 362   5                      }
+ 363   4                  } else if (clearBit(up, leftElev.floor) != 0 || clearBit(down, leftElev.floor) != 0) {   // �
+             -�果没有，尝试响应外部请求
+ 364   4                      if (hasUpRequest(up, leftElev.floor) || hasUpRequest(down, leftElev.floor)) {   // 外部�
+             -��求有向上的
+ 365   5                          leftElev.status = UP;
+ 366   5                          leftElev.floor++;
+ 367   5                      } else {      // 外部请求有向下的
+ 368   5                          leftElev.status = DOWN;
+ 369   5                          leftElev.floor++;
+ 370   5                      }
+ 371   4                  }
+ 372   3      
+ 373   3                  if (hasDownRequest(down, rightElev.floor) || hasDownRequest(er, rightElev.floor)) {   // 如�
+             -�还存在向下的请求，继续下降
+ 374   4                      rightElev.floor--;
+ 375   4                  } else if (hasUpRequest(up, rightElev.floor) || hasUpRequest(er, rightElev.floor)) {   // 否�
+             -��，检查是否存在上方请求
+ 376   4                      rightElev.status = UP;
+ 377   4                      rightElev.floor++;
+ 378   4                  } else {  // 都没有，静置右边电梯
+ 379   4                      rightElev.status = STILL;
+ 380   4                  }
+ 381   3              }
+ 382   2          } else if (leftElev.status == UP) {
+ 383   2              if (rightElev.status == STILL) {
+ 384   3                  // 向上，静止
+ 385   3                  if (clearBit(er, rightElev.floor) != 0) {  // 静止的优先响应内部请求
+ 386   4                      if (hasUpRequest(er, rightElev.floor)) {
+ 387   5                          rightElev.status = UP;
+ 388   5                          rightElev.floor++;
+ 389   5                      } else if (hasDownRequest(er, rightElev.floor)) {
+ 390   5                          rightElev.status = DOWN;
+ 391   5                          rightElev.floor--;
+ 392   5                      }
+ 393   4                  } else if (clearBit(up, rightElev.floor) != 0 || clearBit(down, rightElev.floor) != 0) {   // 
+             -内部无请求，响应外部请求
+ 394   4                      if (hasUpRequest(up, rightElev.floor) || hasUpRequest(down, rightElev.floor)) {
+ 395   5                          rightElev.status = UP;
+ 396   5                          rightElev.floor++;
+ 397   5                      } else {
+ 398   5                          rightElev.status = DOWN;
+ 399   5                          rightElev.floor--;
+ 400   5                      }
+ 401   4                  }
+ 402   3      
+ 403   3                  if (hasUpRequest(up, leftElev.floor) || hasUpRequest(el, leftElev.floor)) {  // 如果向上�
+             -�电梯在上方还有向上的请求，继续向上
+ 404   4                      leftElev.floor++;
+ 405   4                  } else if (hasDownRequest(el, leftElev.floor) || hasDownRequest(down, leftElev.floor)) { // �
+             -�果没有，检查向下的请求
+ 406   4                      leftElev.status = DOWN;
+ 407   4                      leftElev.floor--;
+ 408   4                  } else {  // 如果也没有，直接设置位静止
+ 409   4                      leftElev.status = STILL;
+ 410   4                  }
+ 411   3              } else if (rightElev.status == UP) {
+ 412   3                  // 向上， 向上
+ 413   3                  if (hasUpRequest(el, leftElev.floor) || hasUpRequest(up, leftElev.floor)) {
+C51 COMPILER V9.54   MAIN                                                                  04/29/2021 23:46:29 PAGE 8   
+
+ 414   4                      leftElev.floor++;
+ 415   4                  } else if (hasDownRequest(el, leftElev.floor) || hasDownRequest(down, leftElev.floor)) {
+ 416   4                      leftElev.status = DOWN;
+ 417   4                      leftElev.floor--;
+ 418   4                  } else {
+ 419   4                      leftElev.status = STILL;
+ 420   4                  }
+ 421   3      
+ 422   3                  if (hasUpRequest(er, rightElev.floor) || hasUpRequest(up, rightElev.floor)) {
+ 423   4                      rightElev.floor++;
+ 424   4                  } else if (hasDownRequest(er, rightElev.floor) || hasDownRequest(down, rightElev.floor)) {
+ 425   4                      rightElev.status = DOWN;
+ 426   4                      rightElev.floor--;
+ 427   4                  } else {
+ 428   4                      rightElev.status = STILL;
+ 429   4                  }
+ 430   3              } else {
+ 431   3                  // 向上，向下
+ 432   3                  if (hasUpRequest(el, leftElev.floor) || hasUpRequest(up, leftElev.floor)) {  // 如果左边�
+             -�梯有向上请求，继续向上
+ 433   4                      leftElev.floor++;
+ 434   4                  } else if (hasDownRequest(el, leftElev.floor) || hasDownRequest(down, leftElev.floor)) { // �
+             -�果没有，检查向下的请求
+ 435   4                      leftElev.status = DOWN;
+ 436   4                      leftElev.floor--;
+ 437   4                  } else {  // 否则，静止左边电梯
+ 438   4                      leftElev.status = STILL;
+ 439   4                  }
+ 440   3      
+ 441   3                  if (hasDownRequest(er, rightElev.floor) || hasDownRequest(down, rightElev.floor)) { // 如果�
+             -��边电梯有向下请求，继续向下
+ 442   4                      rightElev.floor--;
+ 443   4                  } else if (hasUpRequest(up, rightElev.floor) || hasUpRequest(er, rightElev.floor)) { // 如果
+             -没有，检查向上的请求
+ 444   4                      rightElev.status = UP;
+ 445   4                      rightElev.floor++;
+ 446   4                  } else {  // 否则，静止右边电梯
+ 447   4                      rightElev.status = STILL;
+ 448   4                  }
+ 449   3              }
+ 450   2      
+ 451   2          } else {
+ 452   2              if (rightElev.status == STILL) {
+ 453   3                  // 向下，静止
+ 454   3                  if (clearBit(er, rightElev.floor) != 0) {
+ 455   4                      if (hasUpRequest(er, rightElev.floor)) {
+ 456   5                          rightElev.status = UP;
+ 457   5                          rightElev.floor++;
+ 458   5                      } else if (hasDownRequest(er, rightElev.floor)) {
+ 459   5                          rightElev.status = DOWN;
+ 460   5                          rightElev.floor--;
+ 461   5                      }
+ 462   4                  } else if (clearBit(up, rightElev.floor) != 0 || clearBit(down, rightElev.floor) != 0) {
+ 463   4                      if (hasUpRequest(up, rightElev.floor) || hasUpRequest(down, rightElev.floor)) {
+ 464   5                          rightElev.status = UP;
+ 465   5                          rightElev.floor++;
+ 466   5                      } else {
+ 467   5                          rightElev.status = DOWN;
+ 468   5                          rightElev.floor--;
+ 469   5                      }
+ 470   4                  }
+ 471   3      
+C51 COMPILER V9.54   MAIN                                                                  04/29/2021 23:46:29 PAGE 9   
+
+ 472   3                  if (hasDownRequest(el, leftElev.floor) || hasDownRequest(down, leftElev.floor)) {
+ 473   4                      leftElev.floor--;
+ 474   4                  } else if (hasUpRequest(el, leftElev.floor) || hasUpRequest(up, leftElev.floor)) {
+ 475   4                      leftElev.status = UP;
+ 476   4                      leftElev.floor++;
+ 477   4                  } else {
+ 478   4                      leftElev.status = STILL;
+ 479   4                  }
+ 480   3              } else if (rightElev.status == UP) {
+ 481   3                  // 向下， 向上
+ 482   3                  if (hasDownRequest(el, leftElev.floor) || hasDownRequest(down, leftElev.floor)) {
+ 483   4                      leftElev.floor--;
+ 484   4                  } else if (hasUpRequest(el, leftElev.floor) || hasUpRequest(up, leftElev.floor)) {
+ 485   4                      leftElev.status = UP;
+ 486   4                      leftElev.floor++;
+ 487   4                  } else {
+ 488   4                      leftElev.floor = STILL;
+ 489   4                  }
+ 490   3      
+ 491   3                  if (hasUpRequest(er, rightElev.floor) || hasUpRequest(up, rightElev.floor)) {
+ 492   4                      rightElev.floor++;
+ 493   4                  } else if (hasDownRequest(er, rightElev.floor) || hasDownRequest(down, rightElev.floor)) {
+ 494   4                      rightElev.status = DOWN;
+ 495   4                      rightElev.floor--;
+ 496   4                  } else {
+ 497   4                      rightElev.status = STILL;
+ 498   4                  }
+ 499   3              } else {
+ 500   3                  // 向下，向下
+ 501   3                  if (hasDownRequest(el, leftElev.floor) || hasDownRequest(down, leftElev.floor)) {
+ 502   4                      leftElev.floor--;
+ 503   4                  } else if (hasUpRequest(el, leftElev.floor) || hasUpRequest(up, leftElev.floor)) {
+ 504   4                      leftElev.status = UP;
+ 505   4                      leftElev.floor++;
+ 506   4                  } else {
+ 507   4                      leftElev.status = STILL;
+ 508   4                  }
+ 509   3      
+ 510   3                  if (hasDownRequest(er, rightElev.floor) || hasDownRequest(down, rightElev.floor)) {
+ 511   4                      rightElev.floor--;
+ 512   4                  } else if (hasUpRequest(er, rightElev.floor) || hasUpRequest(up, rightElev.floor)) {
+ 513   4                      rightElev.status = UP;
+ 514   4                      rightElev.floor++;
+ 515   4                  } else {
+ 516   4                      rightElev.status = STILL;
+ 517   4                  }
+ 518   3      
+ 519   3              }
+ 520   2          }
+ 521   1      
+ 522   1          // 更新LCD显示器和指示灯
+ 523   1          updateIndicators();
+ 524   1          showElevStatus();
+ 525   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    519    ----
+   CODE SIZE        =   3498    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     20      11
+   DATA SIZE        =     20       7
+C51 COMPILER V9.54   MAIN                                                                  04/29/2021 23:46:29 PAGE 10  
+
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
