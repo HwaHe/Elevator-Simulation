@@ -26,7 +26,7 @@
 
 ### 仿真原理图：
 
-![schematic plot](https://gallery-1259614029.cos.ap-chengdu.myqcloud.com/img/20210506164609.BMP)
+![schematic plot](https://gallery-1259614029.cos.ap-chengdu.myqcloud.com/img/20210525180532.SVG)
 
 
 
