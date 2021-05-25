@@ -1,0 +1,4 @@
+**/*.mp4
+doc/*.zip
+doc/*.mp4
+keil/.idea/*

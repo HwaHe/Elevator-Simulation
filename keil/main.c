@@ -33,7 +33,7 @@ typedef struct Elevator {
 } Elev;
 
 Elev leftElev, rightElev;
-int el = 0, er = 0, up = 0, down = 0;
+uchar el = 0, er = 0, up = 0, down = 0;
 
 void main() {
     uint k;
