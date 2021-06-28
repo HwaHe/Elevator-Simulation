@@ -36,13 +36,13 @@
 
 每次循环初始状态可以按下表分为9种：
 
-<img src="https://gallery-1259614029.cos.ap-chengdu.myqcloud.com/img/20210506165625.jpg" style="zoom:50%;"/>
+<img src="https://gallery-1259614029.cos.ap-chengdu.myqcloud.com/img/20210506165625.jpg" style="zoom:50%; argin:0 auto;"/>
 
 每种状态可以用以下方式进行响应：
 
 **向上：**
 
-![](https://gallery-1259614029.cos.ap-chengdu.myqcloud.com/img/20210506165701.png
+<img src="https://gallery-1259614029.cos.ap-chengdu.myqcloud.com/img/20210506165701.png" style="zoom:50; margin:0 auto;"/>
 
 **向下：**
 
