@@ -42,19 +42,19 @@
 
 **向上：**
 
-<img src="https://gallery-1259614029.cos.ap-chengdu.myqcloud.com/img/20210506165701.png" style="zoom:50; margin:0 auto;"/>
+<img src="https://gallery-1259614029.cos.ap-chengdu.myqcloud.com/img/20210506165701.png" style="zoom:50%; margin:0 auto;"/>
 
 **向下：**
 
-![](https://gallery-1259614029.cos.ap-chengdu.myqcloud.com/img/20210506165721.png)
+<img src="https://gallery-1259614029.cos.ap-chengdu.myqcloud.com/img/20210506165721.png" style="zoom:50%; margin:0 auto; " />
 
 **静止：**
 
-![](https://gallery-1259614029.cos.ap-chengdu.myqcloud.com/img/20210506165740.png)
+<img src="https://gallery-1259614029.cos.ap-chengdu.myqcloud.com/img/20210506165740.png" style="zoom:50%; margin: 0 auto; "/>
 
 **算法流程：**
 
-![](https://gallery-1259614029.cos.ap-chengdu.myqcloud.com/img/20210506165822.png)
+<img src="https://gallery-1259614029.cos.ap-chengdu.myqcloud.com/img/20210506165822.png" style="zoom:50%; margin: 0 auto; "/>
 
 
 
